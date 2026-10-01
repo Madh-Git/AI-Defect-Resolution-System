@@ -1,0 +1,493 @@
+ECP-1 Payment Management 
+
+Title: Payment Management 
+
+Description: 
+
+Manage payment processing, refunds, transaction validation, and payment gateway integration. 
+
+ 
+
+ECP-2 Credit card payment fails during checkout (DONE) 
+
+Description: 
+
+Users receive a 500 Internal Server Error when attempting to complete payment using credit cards. Orders are not generated. 
+
+  
+
+Priority: Highest 
+
+Root Cause: 
+
+Payment token became null when VISA card validation service timed out. 
+
+  
+
+The payment workflow attempted to process the transaction without validating the token and resulted in a 500 Internal Server Error. 
+
+Resolution: 
+
+Added null validation before payment processing. 
+
+  
+
+Implemented retry logic for payment gateway service calls and improved error handling for timeout scenarios. 
+
+  
+
+Verified successfully in QA environment. 
+
+ 
+
+ECP-3 Duplicate payment transactions created for single order (DONE) 
+
+Description: 
+
+Certain users report being charged twice after clicking the Pay button only once. 
+
+   
+
+Priority: High 
+
+Root Cause: 
+
+Users clicked the Pay button multiple times while waiting for the response. 
+
+  
+
+Frontend allowed repeated submissions and generated duplicate API requests. 
+
+Resolution: 
+
+Added debounce mechanism on the payment button. 
+
+  
+
+Disabled multiple submissions until payment response is received. 
+
+  
+
+Verified duplicate transactions are no longer created. 
+
+ 
+
+ECP-4 Refund request remains in processing state 
+
+Description: 
+
+Refunds initiated by customers never move beyond the processing status. 
+
+  
+
+Priority: High 
+
+ECP-5 Payment succeeds but order is not created 
+
+Description: 
+
+Payment gateway confirms successful payment but no order record is generated.  
+
+Priority: Highest 
+
+ECP-6 Expired debit cards accepted during payment 
+
+Description: 
+
+System allows checkout using expired debit cards. 
+
+  
+
+Priority: Medium 
+
+ 
+
+ECP-7 Shopping Cart Management 
+
+Title: Shopping Cart Management 
+
+Description: 
+
+Handle cart operations such as add, update, remove, quantity management, and coupon application. 
+
+ECP-8 Cart quantity not updating (DONE) 
+
+Description: 
+
+Users cannot increase or decrease product quantity in the shopping cart. 
+
+  
+
+Priority: High 
+
+ 
+
+Root Cause: 
+
+ 
+
+Cart update API was not persisting item quantity changes to the database. 
+
+  
+
+CartService update method failed to invoke repository save operation. 
+
+Resolution: 
+
+Updated CartService quantity update logic. 
+
+  
+
+Added repository persistence call and verified quantity changes are correctly stored. 
+
+ECP-9 Coupon code not applied (DONE) 
+
+Description: 
+
+Valid coupon codes fail to reduce order total. 
+
+  
+
+Priority: High 
+
+Root Cause: 
+
+Coupon validation service incorrectly marked active coupons as expired due to timezone conversion issues. 
+
+Resolution: 
+
+Updated coupon validation logic. 
+
+  
+
+Normalized timezone handling and corrected expiration date comparison logic. 
+
+  
+
+Verified coupon application across all supported regions. 
+
+ECP-10 Cart items disappear after page refresh 
+
+Description: 
+
+Products added to cart are removed after refreshing the browser. 
+
+   
+
+Priority: High 
+
+ECP-11 Cart total calculation incorrect 
+
+Description: 
+
+Displayed cart total does not match product prices. 
+
+  
+
+Priority: High 
+
+ECP-12 Guest user cart not retained 
+
+Description: 
+
+Guest user cart becomes empty after navigating between pages. 
+
+   
+
+Priority: Medium 
+
+ECP-13 Product Catalog Management 
+
+Title: Product Catalog Management 
+
+Description: 
+
+Manage products, search, filters, pricing, reviews, and product information. 
+
+ECP-14 Product search returns no results (DONE) 
+
+Description: 
+
+Valid products are not returned in search results. 
+
+   
+
+Priority: High 
+
+Root Cause: 
+
+Search index was not refreshed after product creation and updates. 
+
+  
+
+Newly created products were missing from the search database. 
+
+Resolution: 
+
+Added automatic reindexing after product updates. 
+
+  
+
+Implemented search index synchronization process. 
+
+  
+
+Verified products appear immediately in search results. 
+
+ 
+
+ECP-15 Product image failing to load 
+
+Description: 
+
+Several product images display as broken images. 
+
+  
+
+Priority: Medium 
+
+ECP-16 Product filters not working 
+
+Description: 
+
+Filtering by category, brand, or price produces incorrect results. 
+
+  
+
+Priority: High 
+
+ECP-17 Incorrect product price displayed 
+
+Description: 
+
+Price displayed on product page differs from checkout value. 
+
+ 
+
+Priority: High 
+
+ 
+
+ECP-18 Product reviews not visible 
+
+Description: 
+
+Customer reviews fail to load for multiple products. 
+
+  
+
+Priority: Medium 
+
+ECP-19 User Authentication & Security 
+
+Title: User Authentication & Security 
+
+Description: 
+
+User registration, login, session management, password reset, and token validation. 
+
+ 
+
+ECP-20 User login failing with valid credentials (DONE) 
+
+Description: 
+
+Registered users cannot log in despite providing correct credentials. 
+
+  
+
+Priority: Highest 
+
+Root Cause: 
+
+JWT secret key configuration mismatch existed between authentication service instances. 
+
+  
+
+Token generation and validation used different secrets. 
+
+Resolution: 
+
+Unified JWT configuration across all deployment environments. 
+
+  
+
+Updated authentication service configuration and verified successful login operations. 
+
+ECP-21 Password reset email not received 
+
+Description: 
+
+Reset password requests do not send emails. 
+
+  
+
+Priority: High 
+
+ECP-22 User session expires unexpectedly (DONE) 
+
+Description: 
+
+Users are logged out within a few minutes of authentication. 
+
+  
+
+Priority: High 
+
+Root Cause: 
+
+Session timeout value was incorrectly configured to five minutes due to environment configuration override. 
+
+Resolution: 
+
+Updated session timeout configuration to thirty minutes. 
+
+  
+
+Removed conflicting environment override settings. 
+
+  
+
+Verified session stability across browsers. 
+
+ECP-23 Account registration throws validation error 
+
+Description: 
+
+New users cannot register due to unexpected validation failures. 
+
+  
+
+Priority: High 
+
+ECP-24 JWT token validation failing 
+
+Description: 
+
+Authenticated API requests are rejected with unauthorized errors. 
+
+  
+
+Priority: Highest 
+
+ECP-25 Order Processing 
+
+Title: Order Processing 
+
+Description: 
+
+Order creation, order history, shipping updates, and notification management. 
+
+ECP-26 Order history page is empty (DONE) 
+
+Description: 
+
+Customers cannot view previous orders. 
+
+   
+
+Priority: High 
+
+Root Cause: 
+
+Order repository query returned only active orders and excluded completed or archived orders. 
+
+  
+
+Historical order data was filtered incorrectly. 
+
+Resolution: 
+
+Updated repository query to return complete order history. 
+
+  
+
+Added integration tests to validate order retrieval functionality. 
+
+ECP-27 Order confirmation email not sent 
+
+Description: 
+
+Customers do not receive confirmation emails after order placement. 
+
+  
+
+Priority: Medium 
+
+ECP-28 Order status not updated after shipping 
+
+Description: 
+
+Orders remain in Processing status even after shipment. 
+
+  
+
+Priority: High 
+
+ECP-29 Inventory Management 
+
+Title: Inventory Management 
+
+Description: 
+
+Stock allocation, stock updates, inventory validation, and warehouse synchronization. 
+
+ECP-30 Inventory count not updated after purchase (DONE) 
+
+Description: 
+
+Product stock quantity remains unchanged after successful orders. 
+
+  
+
+Priority: High 
+
+Root Cause: 
+
+Inventory update event was not triggered following successful order creation. 
+
+  
+
+Stock synchronization workflow failed to execute. 
+
+Resolution: 
+
+Added inventory event listener after order confirmation. 
+
+  
+
+Verified inventory is updated immediately after successful purchase. 
+
+ 
+
+ECP-31 Negative inventory generated for high-demand products (DONE) 
+
+Description: 
+
+Stock values become negative after multiple simultaneous purchases. 
+
+  
+
+Priority: Highest 
+
+Root Cause: 
+
+Concurrent purchases bypassed stock validation checks. 
+
+  
+
+Multiple transactions updated inventory simultaneously causing race conditions. 
+
+Resolution: 
+
+Implemented inventory locking mechanism. 
+
+  
+
+Added stock validation before order confirmation and prevented negative inventory values. 
+
+  
+
+Verified under load testing. 
+
+ 
